@@ -1,5 +1,32 @@
 # Space filling designs as in 
 # Surrogate Modelling of Computer Experiments with Sequential Experimental Design.", Crombecq, 2011
+
+@doc """
+    MonteCarloThDesign(; dims :: Int ) <: PointIterator
+
+Return an iterator that provides samples within a hyper-
+rectangle in ``ℝ^n`` where ``n`` is the dimension provided 
+to the iterator as `dims`.
+
+Optional keyword arguments are: 
+
+* `n_points=100*dims` 
+    The maximum number of points to generate.
+* `lb=zeros(dims)`  
+    Lower bounds of hyper-rectangle. Must all be finite.
+* `ub=ones(dims)`  
+    Upper bounds of hyper-rectangle. Must all be finite.
+* `seeds = []`.  
+    An initial set of points to add samples to. Is copied and internally modified.
+* `clean_seeds=true`  
+    Throw away seeds that violate the box constraints.
+* `spawn_factor = 100`  
+    In each iteration `dims*spawn_factor` random points are generated.
+* `max_rand_points`  
+    Upper bound on the number of random points.
+* `p_dist_th_factor = 0.5`
+    The samples must have a projected distance exceeding `2*p_dist_th_factor/N`.
+"""
 @with_kw mutable struct MonteCarloThDesign <: PointIterator
     
     dims :: Int # only mandatory argument
@@ -18,10 +45,10 @@
     p_dist_th_factor :: Real = 1/2;
 
     @assert dims > 0
-    #@assert isnothing(n_points) || n_points => 0
-    #@assert length(lb) == length(ub)
-    #@assert all(isfinite.(lb))
-    #@assert all(isfinite.(ub))
+    @assert isnothing(n_points) || ( n_points >= 0)
+    @assert length(lb) == length(ub)
+    @assert all(isfinite.(lb))
+    @assert all(isfinite.(ub))
 end
 
 function is_valid( des :: MonteCarloThDesign )
@@ -110,7 +137,7 @@ Base.length( des:: MonteCarloThDesign ) = isnothing(des.n_points) ? Inf : des.n_
 
 ## Some legacy functions 
 @doc """
-monte_carlo_th( n_points = 10, n_dims = 2; seeds = [], spawn_factor = 50, pdist_threshold_tolerance = 0.5 )
+    monte_carlo_th( n_points = 10, n_dims = 2; seeds = [], spawn_factor = 50, pdist_threshold_tolerance = 0.5 )
 
 Return an array of length `n_points` containing real vectors 
 representing points in space with `n_dims` dimensions.
