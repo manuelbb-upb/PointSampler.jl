@@ -32,7 +32,8 @@ The points should have distinguishable positions:
 ```@example 1
 using Plots
 scatter(Tuple.(points))
-savefig("scatter_monte_carlo_th.png"); nothing #hide
+savefig("scatter_monte_carlo_th.png"); # hide
+nothing # hide
 ```
 
 ![](./scatter_monte_carlo_th.png)
