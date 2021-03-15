@@ -365,12 +365,6 @@ git-tree-sha1 = "e498ddeee6f9fdb4551ce855a46f54dbd900245f"
 uuid = "442fdcdd-2543-5da2-b0f3-8c86c306513e"
 version = "0.3.1"
 
-[[Memoize]]
-deps = ["MacroTools"]
-git-tree-sha1 = "2b1dfcba103de714d31c033b5dacc2e4a12c7caa"
-uuid = "c03570c3-d221-55d1-a50c-7939bbd78826"
-version = "0.4.4"
-
 [[Missings]]
 deps = ["DataAPI"]
 git-tree-sha1 = "f8c673ccc215eb50fcadb285f522420e29e69e1c"
@@ -419,12 +413,6 @@ git-tree-sha1 = "1b556ad51dceefdbf30e86ffa8f528b73c7df2bb"
 uuid = "2f80f16e-611a-54ab-bc61-aa92de5b98fc"
 version = "8.42.0+4"
 
-[[Parameters]]
-deps = ["OrderedCollections", "UnPack"]
-git-tree-sha1 = "2276ac65f1e236e0a6ea70baff3f62ad4c625345"
-uuid = "d96e819e-fc66-5662-9728-84c9c7592b0a"
-version = "0.12.2"
-
 [[Parsers]]
 deps = ["Dates"]
 git-tree-sha1 = "223a825cccef2228f3fdbf2ecc7ca93363059073"
@@ -458,14 +446,6 @@ deps = ["Base64", "Contour", "Dates", "FFMPEG", "FixedPointNumbers", "GR", "Geom
 git-tree-sha1 = "142dd04f5060c04de91cc10ca76dffb291a02426"
 uuid = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
 version = "1.10.6"
-
-[[PointSampler]]
-deps = ["LinearAlgebra", "Memoize", "Parameters"]
-git-tree-sha1 = "2442777e6f573c114bce6708c5ab9c9c6d3f3287"
-repo-rev = "master"
-repo-url = ".."
-uuid = "83398522-c15f-4c9a-bc48-f6d4bc69292b"
-version = "0.1.0"
 
 [[Printf]]
 deps = ["Unicode"]
@@ -588,11 +568,6 @@ version = "1.2.0"
 [[UUIDs]]
 deps = ["Random", "SHA"]
 uuid = "cf7118a7-6976-5b1a-9a39-7adc72f591a4"
-
-[[UnPack]]
-git-tree-sha1 = "387c1f73762231e86e0c9c5443ce3b4a0a9a0c2b"
-uuid = "3a884ed6-31ef-47d7-9d2a-63182c4928ed"
-version = "1.0.2"
 
 [[Unicode]]
 uuid = "4ec0a83e-493e-50e2-b9ac-8f72acf5a8f5"
