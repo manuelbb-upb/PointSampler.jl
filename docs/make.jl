@@ -15,6 +15,8 @@ makedocs(;
     ),
     pages=[
         "Home" => "index.md",
+        "Thresholded Monte-Carlo Iterator" => "monte_carlo_th.md",
+    #    "Docstrings" => "docstrings.md",
     ],
 )
 
