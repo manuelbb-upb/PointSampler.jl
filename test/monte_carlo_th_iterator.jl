@@ -1,6 +1,7 @@
 using PointSampler
 using Test
 
+#%%
 P1 = collect(MonteCarloThDesign(; dims = 1, n_points = 10))
 @test [0.0] ∈ P1
 @test length(P1) == 10

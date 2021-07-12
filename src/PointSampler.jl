@@ -5,8 +5,8 @@ using Parameters: @with_kw
 
 export monte_carlo_th, MonteCarloThDesign
 
-const RVec = Vector{R} where R<:Real;
-const RVecArr = Vector{<:RVec};
+const RVec = AbstractVector{<:Real}
+const RVecArr = AbstractVector{<:RVec};
 
 abstract type PointIterator end
 
