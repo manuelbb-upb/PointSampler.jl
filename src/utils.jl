@@ -42,14 +42,14 @@ end
 
 # Simple scaling from and to the square [0,1]ⁿ for finite box constraints 
 
-@memoize function _width( lb :: RVec, ub :: RVec ) :: RVec 
+@memoize function _width( lb :: RVec, ub :: RVec )
     @assert length(ub) == length(lb)
     @assert all( isfinite.(lb) )
     @assert all( isfinite.(ub) )
     return ub .- lb
 end
 
-function scale_to_unit_square( p :: RVec, lb :: RVec, ub :: RVec ) :: RVec
+function scale_to_unit_square( p :: RVec, lb :: RVec, ub :: RVec ) 
     w = _width(lb, ub)
     return ( p .- lb ) ./ w
 end
@@ -61,7 +61,7 @@ function scale_to_unit_square!( p :: RVec, lb :: RVec, ub :: RVec ) :: Nothing
     nothing
 end
 
-function scale_to_unit_square( P :: RVecArr, lb :: RVec, ub :: RVec ) :: RVecArr
+function scale_to_unit_square( P :: RVecArr, lb :: RVec, ub :: RVec )
     [ scale_to_unit_square( p, lb, ub ) for p ∈ P ]
 end
 
@@ -72,7 +72,7 @@ function scale_to_unit_square!( P :: RVecArr, lb :: RVec, ub :: RVec ) :: Nothin
     nothing
 end
 
-function unscale_from_unit_square( p :: RVec, lb :: RVec, ub :: RVec ) :: RVec 
+function unscale_from_unit_square( p :: RVec, lb :: RVec, ub :: RVec ) 
     w = _width(lb, ub)
     return lb .+ w .* p
 end
@@ -84,7 +84,7 @@ function unscale_from_unit_square!( p :: RVec, lb :: RVec, ub :: RVec ) :: Nothi
     nothing
 end
 
-function unscale_from_unit_square( P :: RVecArr, lb :: RVec, ub :: RVec ) :: RVecArr
+function unscale_from_unit_square( P :: RVecArr, lb :: RVec, ub :: RVec ) 
     [ unscale_from_unit_square(p, lb, ub) for p ∈ P ]
 end
 
