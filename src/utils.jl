@@ -8,19 +8,12 @@ function projected_distance( p1 :: RVec, p2 :: RVec )
 end
 
 @doc "Return array of projected distances for point `p1` against every point in `P`."
-function projected_distance( p1 :: RVec, P :: RVecArr )
+function projected_distance_vector( p1 :: RVec, P :: RVecArr )
     [ projected_distance(p1, p2) for p2 ∈ P ]
 end
 
-@doc "Return array of projected distances for point `p1` against every point in `P`, but every value below `threshold` is set to `0.0`."
-function projected_distance_thresholded( p1 :: RVec, P :: RVecArr, threshold :: Real = 0.1 )
-    pdist_array = projected_distance( p1, P );
-    pdist_array[ pdist_array .< threshold ] .= 0
-    return pdist_array
-end
-
 @doc "Return Euclidean distance from `p1` to every point in `P`."
-function distance( p1 :: RVec, P :: RVecArr )
+function distance_vector( p1 :: RVec, P :: RVecArr )
     [ norm(p1 .- p2, 2) for p2 ∈ P ]
 end
 
@@ -34,63 +27,101 @@ function good_indices( set :: RVecArr, lb :: RVec, ub = RVec )
     .!bad_indices(set, lb, ub)
 end
 
-"Delete vectors from array `seeds` that violate the box constraints `lb` and `ub`."
-function discard_bad_seeds!( seeds :: RVecArr, lb :: RVec, ub = RVec )
-    bad_seeds = bad_indices( seeds, lb, ub )
-    deleteat!(seeds, bad_seeds)
-end
-
 # Simple scaling from and to the square [0,1]ⁿ for finite box constraints 
 
-@memoize function _width( lb :: RVec, ub :: RVec )
+function _width( lb :: RVec, ub :: RVec )
+    #= 
     @assert length(ub) == length(lb)
     @assert all( isfinite.(lb) )
     @assert all( isfinite.(ub) )
+    =#
     return ub .- lb
+end
+
+function scale_with_lb_and_width( p :: RVec, lb, w )
+    return ( p .- lb ) ./ w
 end
 
 function scale_to_unit_square( p :: RVec, lb :: RVec, ub :: RVec ) 
     w = _width(lb, ub)
-    return ( p .- lb ) ./ w
+    return scale_with_lb_and_width(p, lb, w)
+end
+
+function scale_with_lb_and_width!( p :: RVec, lb, w ) :: Nothing
+    p .-= lb
+    p ./= w;
+    return nothing
 end
 
 function scale_to_unit_square!( p :: RVec, lb :: RVec, ub :: RVec ) :: Nothing
     w = _width(lb, ub)
-    p .-= lb
-    p ./= w;
-    nothing
+    return scale_with_lb_and_width!(p, lb, w)
+end
+
+function scale_with_lb_and_width( P :: RVecArr, lb, w )
+    return [ scale_with_lb_and_width(p, lb, w ) for p ∈ P ]
 end
 
 function scale_to_unit_square( P :: RVecArr, lb :: RVec, ub :: RVec )
-    [ scale_to_unit_square( p, lb, ub ) for p ∈ P ]
+    w = _width(lb, ub)
+    return scale_with_lb_and_width(P, lb, w )
+end
+
+function scale_with_lb_and_width!( P :: RVecArr, lb, w )
+    for p in P 
+        scale_with_lb_and_width!(p, lb, w ) 
+    end
+    return nothing
 end
 
 function scale_to_unit_square!( P :: RVecArr, lb :: RVec, ub :: RVec ) :: Nothing
-    for p ∈ P 
-        scale_to_unit_square!( p, lb, ub )
-    end
-    nothing
+    w = _width(lb, ub)
+    return scale_with_lb_and_width!( P, lb, w )
+end
+
+function unscale_with_lb_and_width( p :: RVec, lb, w )
+    return lb .+ w .* p
 end
 
 function unscale_from_unit_square( p :: RVec, lb :: RVec, ub :: RVec ) 
     w = _width(lb, ub)
-    return lb .+ w .* p
+    return unscale_with_lb_and_width(p, lb, w )
 end
 
-function unscale_from_unit_square!( p :: RVec, lb :: RVec, ub :: RVec ) :: Nothing 
+function unscale_with_lb_and_width!( p :: RVec, lb, w )
+    p .*= w 
+    p .+= lb 
+    return nothing
+end
+
+function unscale_from_unit_square!( p :: RVec, lb :: RVec, ub :: RVec ) 
     w = _width(lb, ub)
-    p .*= w
-    p .+= lb
-    nothing
+    return unscale_with_lb_and_width(p, lb, w )
+end
+
+function unscale_with_lb_and_width( P :: RVecArr, lb, w )
+    [ unscale_with_lb_and_width(p, lb, w) for p ∈ P ]
 end
 
 function unscale_from_unit_square( P :: RVecArr, lb :: RVec, ub :: RVec ) 
-    [ unscale_from_unit_square(p, lb, ub) for p ∈ P ]
+    w = _width(lb, ub)
+    return unscale_with_lb_and_width(P, lb, ub)
+end
+
+function unscale_with_lb_and_width!( P :: RVecArr, lb, w )
+    for p in P
+        unscale_with_lb_and_width(p, lb, w)
+    end
+    return nothing
 end
 
 function unscale_from_unit_square!( P :: RVecArr, lb :: RVec, ub :: RVec ) :: Nothing
-    for p ∈ P 
-        unscale_from_unit_square!(p, lb, ub)
-    end
-    nothing
+    w = _width(lb, ub)
+    return unscale_with_lb_and_width!(P, lb, w)
 end
+
+"Return the type of a vector with elements of type `F`."
+_vec_type( ::Type{<:Vector}, F ) = Vector{F}
+"Return the type of a static vector with elements of type `F`."
+_vec_type( T::Type{<:StaticVector}, F ) = similar_type(T, F)
+_vec_type( x :: T, F ) where T<:AbstractVector = _vec_type(T, F)

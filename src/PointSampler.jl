@@ -1,6 +1,6 @@
 module PointSampler
+using StaticArrays
 using LinearAlgebra: norm
-using Memoize: @memoize
 using Parameters: @with_kw
 
 export monte_carlo_th, MonteCarloThDesign
